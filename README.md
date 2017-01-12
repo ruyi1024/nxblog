@@ -1,5 +1,10 @@
 
-a high performance blog system by python django.
+# Introduction
+
+> a high performance blog system by python django. Only use stduy, do't use on production.
+
+# Demo
+http://210.209.125.135:8000/blog/
 
 # Install
 
