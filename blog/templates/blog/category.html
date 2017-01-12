@@ -1,0 +1,32 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% load markdown_view %}
+
+{% block content %}
+<div id="content-wrap">
+    <div class="container">
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2 col-sm-12">
+                <ol class="breadcrumb">
+                    <li><a href="/blog/">博客</a></li>
+                    <li class="active">分类</li>
+                </ol>
+                <div class="widget widget-default">
+                    <div class="widget-header"><h6><i class="fa fa-folder fa-fw"></i>分类</h6></div>
+                    <ul class="widget-body list-group">
+                         {% if categorys_list %}
+                                {% for category in categorys_list %}
+                                <a title="{{category.name}}" href="/blog/category/{{ category.slug }}/" class="list-group-item">{{category.name}}<span class="badge">{{ category.posts_count }}</span></a>
+                                {% endfor %}
+                         {% endif %}
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

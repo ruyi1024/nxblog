@@ -1,0 +1,30 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% load markdown_view %}
+
+{% block content %}
+<div id="content-wrap">
+    <div class="container">
+    </div>
+    <div class="container">
+        <div class="posts-count">共{{ posts_list.count }}篇文章</div>
+        <div id="cd-timeline" class="cd-container" style="margin: 0 0">
+            {% if posts_list %}
+            {% for post in posts_list %}
+            <div class="cd-timeline-block">
+                <div class="cd-timeline-img cd-picture">
+                </div>
+                <div class="cd-timeline-content">
+                    <a href="{% url 'detail' post.id %}">
+                        <div class="title">{{post.title}}</div>
+                    </a>
+                    <span class="cd-date">2{{post.create_time}}</span>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+        <div class="dot"></div>
+    </div>
+</div>
+{% endblock %}

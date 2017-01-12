@@ -1,0 +1,219 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% load markdown_view %}
+
+{% block content %}
+<div id="content-wrap">
+    <div class="container">
+    </div>
+    <div class="container">
+        {% if category %}
+        <ol class="breadcrumb">
+            <li><a href="/blog">博客</a></li>
+            <li><a href="/blog/category">分类</a></li>
+            <li class="active">{{ category }}</li>
+        </ol>
+        {% endif %}
+        <div class="row">
+            <div class="col-md-8">
+                {% if keyword %}
+                    <div class="widget widget-default">
+                        <div class="widget-header">
+                            <h3>Search for "{{ keyword }}"</h3>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if posts_list %}
+                {% for post in posts_list %}
+                <article class="post">
+                    <!-- post header -->
+                    <div class="post-header">
+                        <h1 class="post-title">
+                            <a href="{% url 'detail' post.id %}">{{ post.title }}</a>
+                        </h1>
+                        <div class="post-meta">
+                           <span class="post-time">
+                           <i class="fa fa-calendar-o"></i>
+                           <time datetime="">
+                           {{post.create_time}}
+                           </time>
+                           </span>
+                            <span class="post-category">
+                           &nbsp; &nbsp;|&nbsp;
+                           <i class="fa fa-folder-o"></i>
+                           <a href="/blog/category/{{ post.category.slug }}/">
+                           {{post.category}}
+                           </a>
+                           </span>
+
+                            <span>
+                           &nbsp;|&nbsp;
+                           <i class="fa fa-eye"></i>
+                           <span>阅读{{post.view_count}}次</span>
+                           </span>
+                        </div>
+                    </div>
+                    <!-- post content -->
+                    <div class="post-description">
+                        <p class="markdown-target" data-markdown="">
+                        <p>{{ post.content|markdown }}</p>
+                        </p>
+                    </div>
+                    <!-- read more -->
+                    <div class="post-permalink">
+                        <a href="{% url 'detail' post.id %}"
+                           class="btn btn-more">阅读全文</a>
+                    </div>
+                    <!-- post footer -->
+                    <div class="post-footer clearfix">
+                        <!--
+                        <div class="pull-left tag-list">
+                            <i class="fa fa-tags"></i>
+                            <a class="tag" href="">Laravel</a>
+                        </div>
+                        -->
+                    </div>
+                </article>
+                {% endfor %}
+                {% else %}
+                <p>没有文章.</p>
+                {% endif %}
+
+                <ul class="pagination">
+                    <!-- Previous Page Link -->
+                    {% if posts_list.has_previous %}
+                    <li><a href="?page={{ posts_list.previous_page_number }}" rel="prev">前一页</a></li>
+                    {% else %}
+                    <li class="disabled"><span>前一页</span></li>
+                    {% endif %}
+                    <!--
+                    {% if paginator.page_range %}
+                    {% for page_num in paginator.page_range %}
+                        {% ifequal page_num page %}
+                        <li><a href="?page={{ page_num  }}">{{page_num}}</a></li>
+                        {% else %}
+                        <li class="active"><span>{{page_num}}</span></li>
+                        {% endifequal  %}
+                    {% endfor %}
+                    {% endif %}
+                    -->
+                    {% if posts_list.has_next %}
+                    <li><a href="?page={{ posts_list.next_page_number }}" rel="next">后一页</a></li>
+                    {% else %}
+                    <li class="disabled"><span>后一页</span></li>
+                    {% endif %}
+                </ul>
+
+            </div>
+            <div class="col-md-4">
+                <div class="slide">
+                    <div class="widget widget-user" style="overflow: hidden">
+                        <div class="widget-user-header"
+                             style="background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDIiIGhlaWdodD0iMzAyIj48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJyZ2IoMzgsIDcwLCAxNDIpIiAgLz48cmVjdCB4PSIyLjgiIHk9IjIuOCIgd2lkdGg9IjM5LjE5OTk5OTk5OTk5OTk5NiIgaGVpZ2h0PSIzOS4xOTk5OTk5OTk5OTk5OTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyMiIgc3R5bGU9Im9wYWNpdHk6MC4wNDY7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMTQuMCIgeT0iMTQuMCIgd2lkdGg9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgaGVpZ2h0PSIxNi43OTk5OTk5OTk5OTk5OTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyMiIgc3R5bGU9Im9wYWNpdHk6MC4wNDY7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iNTMuMTk5OTk5OTk5OTk5OTkiIHk9IjIuOCIgd2lkdGg9IjM5LjE5OTk5OTk5OTk5OTk5NiIgaGVpZ2h0PSIzOS4xOTk5OTk5OTk5OTk5OTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2RkZCIgc3R5bGU9Im9wYWNpdHk6MC4wMjtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSI2NC4zOTk5OTk5OTk5OTk5OSIgeT0iMTQuMCIgd2lkdGg9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgaGVpZ2h0PSIxNi43OTk5OTk5OTk5OTk5OTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyMiIgc3R5bGU9Im9wYWNpdHk6MC4xNTtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIxMDMuNTk5OTk5OTk5OTk5OTgiIHk9IjIuOCIgd2lkdGg9IjM5LjE5OTk5OTk5OTk5OTk5NiIgaGVpZ2h0PSIzOS4xOTk5OTk5OTk5OTk5OTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyMiIgc3R5bGU9Im9wYWNpdHk6MC4wOTg7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMTE0Ljc5OTk5OTk5OTk5OTk4IiB5PSIxNC4wIiB3aWR0aD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBoZWlnaHQ9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZGRkIiBzdHlsZT0ib3BhY2l0eTowLjA1NDY2NjY2NjY2NjY2NjY3O3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjE1NC4wIiB5PSIyLjgiIHdpZHRoPSIzOS4xOTk5OTk5OTk5OTk5OTYiIGhlaWdodD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBmaWxsPSJub25lIiBzdHJva2U9IiNkZGQiIHN0eWxlPSJvcGFjaXR5OjAuMTI0MDAwMDAwMDAwMDAwMDE7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMTY1LjIiIHk9IjE0LjAiIHdpZHRoPSIxNi43OTk5OTk5OTk5OTk5OTciIGhlaWdodD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBmaWxsPSJub25lIiBzdHJva2U9IiNkZGQiIHN0eWxlPSJvcGFjaXR5OjAuMDg5MzMzMzMzMzMzMzMzMzM7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMjA0LjM5OTk5OTk5OTk5OTk4IiB5PSIyLjgiIHdpZHRoPSIzOS4xOTk5OTk5OTk5OTk5OTYiIGhlaWdodD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBmaWxsPSJub25lIiBzdHJva2U9IiMyMjIiIHN0eWxlPSJvcGFjaXR5OjAuMTE1MzMzMzMzMzMzMzMzMzQ7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMjE1LjU5OTk5OTk5OTk5OTk3IiB5PSIxNC4wIiB3aWR0aD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBoZWlnaHQ9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZGRkIiBzdHlsZT0ib3BhY2l0eTowLjAyO3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjI1NC43OTk5OTk5OTk5OTk5OCIgeT0iMi44IiB3aWR0aD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBoZWlnaHQ9IjM5LjE5OTk5OTk5OTk5OTk5NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZGRkIiBzdHlsZT0ib3BhY2l0eTowLjAzNzMzMzMzMzMzMzMzMzMzO3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjI2Ni4wIiB5PSIxNC4wIiB3aWR0aD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBoZWlnaHQ9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZGRkIiBzdHlsZT0ib3BhY2l0eTowLjAzNzMzMzMzMzMzMzMzMzMzO3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjIuOCIgeT0iNTMuMTk5OTk5OTk5OTk5OTkiIHdpZHRoPSIzOS4xOTk5OTk5OTk5OTk5OTYiIGhlaWdodD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBmaWxsPSJub25lIiBzdHJva2U9IiMyMjIiIHN0eWxlPSJvcGFjaXR5OjAuMDk4O3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjE0LjAiIHk9IjY0LjM5OTk5OTk5OTk5OTk5IiB3aWR0aD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBoZWlnaHQ9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZGRkIiBzdHlsZT0ib3BhY2l0eTowLjE0MTMzMzMzMzMzMzMzMzM0O3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjUzLjE5OTk5OTk5OTk5OTk5IiB5PSI1My4xOTk5OTk5OTk5OTk5OSIgd2lkdGg9IjM5LjE5OTk5OTk5OTk5OTk5NiIgaGVpZ2h0PSIzOS4xOTk5OTk5OTk5OTk5OTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyMiIgc3R5bGU9Im9wYWNpdHk6MC4wNjMzMzMzMzMzMzMzMzMzNDtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSI2NC4zOTk5OTk5OTk5OTk5OSIgeT0iNjQuMzk5OTk5OTk5OTk5OTkiIHdpZHRoPSIxNi43OTk5OTk5OTk5OTk5OTciIGhlaWdodD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBmaWxsPSJub25lIiBzdHJva2U9IiNkZGQiIHN0eWxlPSJvcGFjaXR5OjAuMDg5MzMzMzMzMzMzMzMzMzM7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMTAzLjU5OTk5OTk5OTk5OTk4IiB5PSI1My4xOTk5OTk5OTk5OTk5OSIgd2lkdGg9IjM5LjE5OTk5OTk5OTk5OTk5NiIgaGVpZ2h0PSIzOS4xOTk5OTk5OTk5OTk5OTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyMiIgc3R5bGU9Im9wYWNpdHk6MC4xNTtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIxMTQuNzk5OTk5OTk5OTk5OTgiIHk9IjY0LjM5OTk5OTk5OTk5OTk5IiB3aWR0aD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBoZWlnaHQ9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjIyIiBzdHlsZT0ib3BhY2l0eTowLjA5ODtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIxNTQuMCIgeT0iNTMuMTk5OTk5OTk5OTk5OTkiIHdpZHRoPSIzOS4xOTk5OTk5OTk5OTk5OTYiIGhlaWdodD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBmaWxsPSJub25lIiBzdHJva2U9IiMyMjIiIHN0eWxlPSJvcGFjaXR5OjAuMTMyNjY2NjY2NjY2NjY2NjU7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMTY1LjIiIHk9IjY0LjM5OTk5OTk5OTk5OTk5IiB3aWR0aD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBoZWlnaHQ9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZGRkIiBzdHlsZT0ib3BhY2l0eTowLjAyO3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjIwNC4zOTk5OTk5OTk5OTk5OCIgeT0iNTMuMTk5OTk5OTk5OTk5OTkiIHdpZHRoPSIzOS4xOTk5OTk5OTk5OTk5OTYiIGhlaWdodD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBmaWxsPSJub25lIiBzdHJva2U9IiNkZGQiIHN0eWxlPSJvcGFjaXR5OjAuMDg5MzMzMzMzMzMzMzMzMzM7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMjE1LjU5OTk5OTk5OTk5OTk3IiB5PSI2NC4zOTk5OTk5OTk5OTk5OSIgd2lkdGg9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgaGVpZ2h0PSIxNi43OTk5OTk5OTk5OTk5OTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2RkZCIgc3R5bGU9Im9wYWNpdHk6MC4xMDY2NjY2NjY2NjY2NjY2NztzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIyNTQuNzk5OTk5OTk5OTk5OTgiIHk9IjUzLjE5OTk5OTk5OTk5OTk5IiB3aWR0aD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBoZWlnaHQ9IjM5LjE5OTk5OTk5OTk5OTk5NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZGRkIiBzdHlsZT0ib3BhY2l0eTowLjEyNDAwMDAwMDAwMDAwMDAxO3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjI2Ni4wIiB5PSI2NC4zOTk5OTk5OTk5OTk5OSIgd2lkdGg9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgaGVpZ2h0PSIxNi43OTk5OTk5OTk5OTk5OTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2RkZCIgc3R5bGU9Im9wYWNpdHk6MC4wNTQ2NjY2NjY2NjY2NjY2NztzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIyLjgiIHk9IjEwMy41OTk5OTk5OTk5OTk5OCIgd2lkdGg9IjM5LjE5OTk5OTk5OTk5OTk5NiIgaGVpZ2h0PSIzOS4xOTk5OTk5OTk5OTk5OTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2RkZCIgc3R5bGU9Im9wYWNpdHk6MC4xNDEzMzMzMzMzMzMzMzMzNDtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIxNC4wIiB5PSIxMTQuNzk5OTk5OTk5OTk5OTgiIHdpZHRoPSIxNi43OTk5OTk5OTk5OTk5OTciIGhlaWdodD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBmaWxsPSJub25lIiBzdHJva2U9IiNkZGQiIHN0eWxlPSJvcGFjaXR5OjAuMDI7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iNTMuMTk5OTk5OTk5OTk5OTkiIHk9IjEwMy41OTk5OTk5OTk5OTk5OCIgd2lkdGg9IjM5LjE5OTk5OTk5OTk5OTk5NiIgaGVpZ2h0PSIzOS4xOTk5OTk5OTk5OTk5OTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2RkZCIgc3R5bGU9Im9wYWNpdHk6MC4xMjQwMDAwMDAwMDAwMDAwMTtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSI2NC4zOTk5OTk5OTk5OTk5OSIgeT0iMTE0Ljc5OTk5OTk5OTk5OTk4IiB3aWR0aD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBoZWlnaHQ9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjIyIiBzdHlsZT0ib3BhY2l0eTowLjAyODY2NjY2NjY2NjY2NjY2NztzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIxMDMuNTk5OTk5OTk5OTk5OTgiIHk9IjEwMy41OTk5OTk5OTk5OTk5OCIgd2lkdGg9IjM5LjE5OTk5OTk5OTk5OTk5NiIgaGVpZ2h0PSIzOS4xOTk5OTk5OTk5OTk5OTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2RkZCIgc3R5bGU9Im9wYWNpdHk6MC4wNzIwMDAwMDAwMDAwMDAwMTtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIxMTQuNzk5OTk5OTk5OTk5OTgiIHk9IjExNC43OTk5OTk5OTk5OTk5OCIgd2lkdGg9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgaGVpZ2h0PSIxNi43OTk5OTk5OTk5OTk5OTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyMiIgc3R5bGU9Im9wYWNpdHk6MC4wNjMzMzMzMzMzMzMzMzMzNDtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIxNTQuMCIgeT0iMTAzLjU5OTk5OTk5OTk5OTk4IiB3aWR0aD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBoZWlnaHQ9IjM5LjE5OTk5OTk5OTk5OTk5NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZGRkIiBzdHlsZT0ib3BhY2l0eTowLjAyO3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjE2NS4yIiB5PSIxMTQuNzk5OTk5OTk5OTk5OTgiIHdpZHRoPSIxNi43OTk5OTk5OTk5OTk5OTciIGhlaWdodD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBmaWxsPSJub25lIiBzdHJva2U9IiNkZGQiIHN0eWxlPSJvcGFjaXR5OjAuMDcyMDAwMDAwMDAwMDAwMDE7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMjA0LjM5OTk5OTk5OTk5OTk4IiB5PSIxMDMuNTk5OTk5OTk5OTk5OTgiIHdpZHRoPSIzOS4xOTk5OTk5OTk5OTk5OTYiIGhlaWdodD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBmaWxsPSJub25lIiBzdHJva2U9IiMyMjIiIHN0eWxlPSJvcGFjaXR5OjAuMTMyNjY2NjY2NjY2NjY2NjU7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMjE1LjU5OTk5OTk5OTk5OTk3IiB5PSIxMTQuNzk5OTk5OTk5OTk5OTgiIHdpZHRoPSIxNi43OTk5OTk5OTk5OTk5OTciIGhlaWdodD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBmaWxsPSJub25lIiBzdHJva2U9IiMyMjIiIHN0eWxlPSJvcGFjaXR5OjAuMDI4NjY2NjY2NjY2NjY2NjY3O3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjI1NC43OTk5OTk5OTk5OTk5OCIgeT0iMTAzLjU5OTk5OTk5OTk5OTk4IiB3aWR0aD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBoZWlnaHQ9IjM5LjE5OTk5OTk5OTk5OTk5NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZGRkIiBzdHlsZT0ib3BhY2l0eTowLjAzNzMzMzMzMzMzMzMzMzMzO3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjI2Ni4wIiB5PSIxMTQuNzk5OTk5OTk5OTk5OTgiIHdpZHRoPSIxNi43OTk5OTk5OTk5OTk5OTciIGhlaWdodD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBmaWxsPSJub25lIiBzdHJva2U9IiNkZGQiIHN0eWxlPSJvcGFjaXR5OjAuMDI7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMi44IiB5PSIxNTQuMCIgd2lkdGg9IjM5LjE5OTk5OTk5OTk5OTk5NiIgaGVpZ2h0PSIzOS4xOTk5OTk5OTk5OTk5OTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyMiIgc3R5bGU9Im9wYWNpdHk6MC4wOTg7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMTQuMCIgeT0iMTY1LjIiIHdpZHRoPSIxNi43OTk5OTk5OTk5OTk5OTciIGhlaWdodD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBmaWxsPSJub25lIiBzdHJva2U9IiNkZGQiIHN0eWxlPSJvcGFjaXR5OjAuMDM3MzMzMzMzMzMzMzMzMzM7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iNTMuMTk5OTk5OTk5OTk5OTkiIHk9IjE1NC4wIiB3aWR0aD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBoZWlnaHQ9IjM5LjE5OTk5OTk5OTk5OTk5NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZGRkIiBzdHlsZT0ib3BhY2l0eTowLjAzNzMzMzMzMzMzMzMzMzMzO3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjY0LjM5OTk5OTk5OTk5OTk5IiB5PSIxNjUuMiIgd2lkdGg9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgaGVpZ2h0PSIxNi43OTk5OTk5OTk5OTk5OTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyMiIgc3R5bGU9Im9wYWNpdHk6MC4xMzI2NjY2NjY2NjY2NjY2NTtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIxMDMuNTk5OTk5OTk5OTk5OTgiIHk9IjE1NC4wIiB3aWR0aD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBoZWlnaHQ9IjM5LjE5OTk5OTk5OTk5OTk5NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjIyIiBzdHlsZT0ib3BhY2l0eTowLjEzMjY2NjY2NjY2NjY2NjY1O3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjExNC43OTk5OTk5OTk5OTk5OCIgeT0iMTY1LjIiIHdpZHRoPSIxNi43OTk5OTk5OTk5OTk5OTciIGhlaWdodD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBmaWxsPSJub25lIiBzdHJva2U9IiNkZGQiIHN0eWxlPSJvcGFjaXR5OjAuMDM3MzMzMzMzMzMzMzMzMzM7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMTU0LjAiIHk9IjE1NC4wIiB3aWR0aD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBoZWlnaHQ9IjM5LjE5OTk5OTk5OTk5OTk5NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZGRkIiBzdHlsZT0ib3BhY2l0eTowLjAzNzMzMzMzMzMzMzMzMzMzO3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjE2NS4yIiB5PSIxNjUuMiIgd2lkdGg9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgaGVpZ2h0PSIxNi43OTk5OTk5OTk5OTk5OTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyMiIgc3R5bGU9Im9wYWNpdHk6MC4wOTg7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMjA0LjM5OTk5OTk5OTk5OTk4IiB5PSIxNTQuMCIgd2lkdGg9IjM5LjE5OTk5OTk5OTk5OTk5NiIgaGVpZ2h0PSIzOS4xOTk5OTk5OTk5OTk5OTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2RkZCIgc3R5bGU9Im9wYWNpdHk6MC4wMjtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIyMTUuNTk5OTk5OTk5OTk5OTciIHk9IjE2NS4yIiB3aWR0aD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBoZWlnaHQ9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZGRkIiBzdHlsZT0ib3BhY2l0eTowLjAzNzMzMzMzMzMzMzMzMzMzO3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjI1NC43OTk5OTk5OTk5OTk5OCIgeT0iMTU0LjAiIHdpZHRoPSIzOS4xOTk5OTk5OTk5OTk5OTYiIGhlaWdodD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBmaWxsPSJub25lIiBzdHJva2U9IiMyMjIiIHN0eWxlPSJvcGFjaXR5OjAuMDI4NjY2NjY2NjY2NjY2NjY3O3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjI2Ni4wIiB5PSIxNjUuMiIgd2lkdGg9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgaGVpZ2h0PSIxNi43OTk5OTk5OTk5OTk5OTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyMiIgc3R5bGU9Im9wYWNpdHk6MC4xMzI2NjY2NjY2NjY2NjY2NTtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIyLjgiIHk9IjIwNC4zOTk5OTk5OTk5OTk5OCIgd2lkdGg9IjM5LjE5OTk5OTk5OTk5OTk5NiIgaGVpZ2h0PSIzOS4xOTk5OTk5OTk5OTk5OTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2RkZCIgc3R5bGU9Im9wYWNpdHk6MC4wNzIwMDAwMDAwMDAwMDAwMTtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIxNC4wIiB5PSIyMTUuNTk5OTk5OTk5OTk5OTciIHdpZHRoPSIxNi43OTk5OTk5OTk5OTk5OTciIGhlaWdodD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBmaWxsPSJub25lIiBzdHJva2U9IiNkZGQiIHN0eWxlPSJvcGFjaXR5OjAuMDI7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iNTMuMTk5OTk5OTk5OTk5OTkiIHk9IjIwNC4zOTk5OTk5OTk5OTk5OCIgd2lkdGg9IjM5LjE5OTk5OTk5OTk5OTk5NiIgaGVpZ2h0PSIzOS4xOTk5OTk5OTk5OTk5OTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyMiIgc3R5bGU9Im9wYWNpdHk6MC4wNjMzMzMzMzMzMzMzMzMzNDtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSI2NC4zOTk5OTk5OTk5OTk5OSIgeT0iMjE1LjU5OTk5OTk5OTk5OTk3IiB3aWR0aD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBoZWlnaHQ9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZGRkIiBzdHlsZT0ib3BhY2l0eTowLjA3MjAwMDAwMDAwMDAwMDAxO3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjEwMy41OTk5OTk5OTk5OTk5OCIgeT0iMjA0LjM5OTk5OTk5OTk5OTk4IiB3aWR0aD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBoZWlnaHQ9IjM5LjE5OTk5OTk5OTk5OTk5NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjIyIiBzdHlsZT0ib3BhY2l0eTowLjAyODY2NjY2NjY2NjY2NjY2NztzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIxMTQuNzk5OTk5OTk5OTk5OTgiIHk9IjIxNS41OTk5OTk5OTk5OTk5NyIgd2lkdGg9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgaGVpZ2h0PSIxNi43OTk5OTk5OTk5OTk5OTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2RkZCIgc3R5bGU9Im9wYWNpdHk6MC4xMjQwMDAwMDAwMDAwMDAwMTtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIxNTQuMCIgeT0iMjA0LjM5OTk5OTk5OTk5OTk4IiB3aWR0aD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBoZWlnaHQ9IjM5LjE5OTk5OTk5OTk5OTk5NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZGRkIiBzdHlsZT0ib3BhY2l0eTowLjAyO3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjE2NS4yIiB5PSIyMTUuNTk5OTk5OTk5OTk5OTciIHdpZHRoPSIxNi43OTk5OTk5OTk5OTk5OTciIGhlaWdodD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBmaWxsPSJub25lIiBzdHJva2U9IiNkZGQiIHN0eWxlPSJvcGFjaXR5OjAuMTQxMzMzMzMzMzMzMzMzMzQ7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMjA0LjM5OTk5OTk5OTk5OTk4IiB5PSIyMDQuMzk5OTk5OTk5OTk5OTgiIHdpZHRoPSIzOS4xOTk5OTk5OTk5OTk5OTYiIGhlaWdodD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBmaWxsPSJub25lIiBzdHJva2U9IiNkZGQiIHN0eWxlPSJvcGFjaXR5OjAuMDU0NjY2NjY2NjY2NjY2Njc7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMjE1LjU5OTk5OTk5OTk5OTk3IiB5PSIyMTUuNTk5OTk5OTk5OTk5OTciIHdpZHRoPSIxNi43OTk5OTk5OTk5OTk5OTciIGhlaWdodD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBmaWxsPSJub25lIiBzdHJva2U9IiNkZGQiIHN0eWxlPSJvcGFjaXR5OjAuMTI0MDAwMDAwMDAwMDAwMDE7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMjU0Ljc5OTk5OTk5OTk5OTk4IiB5PSIyMDQuMzk5OTk5OTk5OTk5OTgiIHdpZHRoPSIzOS4xOTk5OTk5OTk5OTk5OTYiIGhlaWdodD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBmaWxsPSJub25lIiBzdHJva2U9IiNkZGQiIHN0eWxlPSJvcGFjaXR5OjAuMTA2NjY2NjY2NjY2NjY2Njc7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMjY2LjAiIHk9IjIxNS41OTk5OTk5OTk5OTk5NyIgd2lkdGg9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgaGVpZ2h0PSIxNi43OTk5OTk5OTk5OTk5OTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2RkZCIgc3R5bGU9Im9wYWNpdHk6MC4wODkzMzMzMzMzMzMzMzMzMztzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIyLjgiIHk9IjI1NC43OTk5OTk5OTk5OTk5OCIgd2lkdGg9IjM5LjE5OTk5OTk5OTk5OTk5NiIgaGVpZ2h0PSIzOS4xOTk5OTk5OTk5OTk5OTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2RkZCIgc3R5bGU9Im9wYWNpdHk6MC4wMjtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIxNC4wIiB5PSIyNjYuMCIgd2lkdGg9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgaGVpZ2h0PSIxNi43OTk5OTk5OTk5OTk5OTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyMiIgc3R5bGU9Im9wYWNpdHk6MC4xMzI2NjY2NjY2NjY2NjY2NTtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSI1My4xOTk5OTk5OTk5OTk5OSIgeT0iMjU0Ljc5OTk5OTk5OTk5OTk4IiB3aWR0aD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBoZWlnaHQ9IjM5LjE5OTk5OTk5OTk5OTk5NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjIyIiBzdHlsZT0ib3BhY2l0eTowLjA5ODtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSI2NC4zOTk5OTk5OTk5OTk5OSIgeT0iMjY2LjAiIHdpZHRoPSIxNi43OTk5OTk5OTk5OTk5OTciIGhlaWdodD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBmaWxsPSJub25lIiBzdHJva2U9IiMyMjIiIHN0eWxlPSJvcGFjaXR5OjAuMTU7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMTAzLjU5OTk5OTk5OTk5OTk4IiB5PSIyNTQuNzk5OTk5OTk5OTk5OTgiIHdpZHRoPSIzOS4xOTk5OTk5OTk5OTk5OTYiIGhlaWdodD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBmaWxsPSJub25lIiBzdHJva2U9IiNkZGQiIHN0eWxlPSJvcGFjaXR5OjAuMDg5MzMzMzMzMzMzMzMzMzM7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMTE0Ljc5OTk5OTk5OTk5OTk4IiB5PSIyNjYuMCIgd2lkdGg9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgaGVpZ2h0PSIxNi43OTk5OTk5OTk5OTk5OTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyMiIgc3R5bGU9Im9wYWNpdHk6MC4wNjMzMzMzMzMzMzMzMzMzNDtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIxNTQuMCIgeT0iMjU0Ljc5OTk5OTk5OTk5OTk4IiB3aWR0aD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBoZWlnaHQ9IjM5LjE5OTk5OTk5OTk5OTk5NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZGRkIiBzdHlsZT0ib3BhY2l0eTowLjE0MTMzMzMzMzMzMzMzMzM0O3N0cm9rZS13aWR0aDo1LjZweDsiICAvPjxyZWN0IHg9IjE2NS4yIiB5PSIyNjYuMCIgd2lkdGg9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgaGVpZ2h0PSIxNi43OTk5OTk5OTk5OTk5OTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyMiIgc3R5bGU9Im9wYWNpdHk6MC4wOTg7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMjA0LjM5OTk5OTk5OTk5OTk4IiB5PSIyNTQuNzk5OTk5OTk5OTk5OTgiIHdpZHRoPSIzOS4xOTk5OTk5OTk5OTk5OTYiIGhlaWdodD0iMzkuMTk5OTk5OTk5OTk5OTk2IiBmaWxsPSJub25lIiBzdHJva2U9IiNkZGQiIHN0eWxlPSJvcGFjaXR5OjAuMDM3MzMzMzMzMzMzMzMzMzM7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PHJlY3QgeD0iMjE1LjU5OTk5OTk5OTk5OTk3IiB5PSIyNjYuMCIgd2lkdGg9IjE2Ljc5OTk5OTk5OTk5OTk5NyIgaGVpZ2h0PSIxNi43OTk5OTk5OTk5OTk5OTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2RkZCIgc3R5bGU9Im9wYWNpdHk6MC4wMzczMzMzMzMzMzMzMzMzMztzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIyNTQuNzk5OTk5OTk5OTk5OTgiIHk9IjI1NC43OTk5OTk5OTk5OTk5OCIgd2lkdGg9IjM5LjE5OTk5OTk5OTk5OTk5NiIgaGVpZ2h0PSIzOS4xOTk5OTk5OTk5OTk5OTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2RkZCIgc3R5bGU9Im9wYWNpdHk6MC4wMjtzdHJva2Utd2lkdGg6NS42cHg7IiAgLz48cmVjdCB4PSIyNjYuMCIgeT0iMjY2LjAiIHdpZHRoPSIxNi43OTk5OTk5OTk5OTk5OTciIGhlaWdodD0iMTYuNzk5OTk5OTk5OTk5OTk3IiBmaWxsPSJub25lIiBzdHJva2U9IiMyMjIiIHN0eWxlPSJvcGFjaXR5OjAuMTE1MzMzMzMzMzMzMzMzMzQ7c3Ryb2tlLXdpZHRoOjUuNnB4OyIgIC8+PC9zdmc+) center center;">
+                            <h3 class="widget-user-username">NxBlog</h3>
+                            <h5 class="widget-user-desc">This Is A Blog By Django.</h5>
+                        </div>
+                        <div class="widget-user-image">
+                            <img class="img-circle" src="{% static 'img/avatar.jpg' %}"
+                                 alt="User Avatar">
+                        </div>
+                        <div class="widget-user-footer">
+                            <div class="row">
+                                <div class="col-xs-3 border-right center-block">
+                                    <div class="description-block">
+                                        <a href="http://www.niceru.com/"
+                                           title="Facebook" class="description-header"><i
+                                                class="fa fa-facebook fa-fw fa-lg" aria-hidden="true"></i></a>
+                                    </div>
+                                </div>
+                                <div class="col-xs-3 border-right center-block">
+                                    <div class="description-block">
+                                        <a href="http://www.niceru.com/" title="Twitter"
+                                           class="description-header"><i class="fa fa-twitter fa-fw fa-lg"
+                                                                         aria-hidden="true"></i></a>
+                                    </div>
+                                </div>
+                                <div class="col-xs-3 border-right center-block">
+                                    <div class="description-block">
+                                        <a href="http://www.niceru.com/" title="Weibo"
+                                           class="description-header"><i class="fa fa-weibo fa-fw fa-lg"
+                                                                         aria-hidden="true"></i></a>
+                                    </div>
+                                </div>
+                                <div class="col-xs-3 border-right center-block">
+                                    <div class="description-block">
+                                        <a href="http://www.niceru.com/" title="Github"
+                                           class="description-header"><i class="fa fa-github fa-fw fa-lg"
+                                                                         aria-hidden="true"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="widget widget-default">
+                        <div class="widget-header"><h6><i class="fa fa-fire fa-fw"></i>热门文章</h6></div>
+                        <ul class="widget-body hot-posts">
+                            {% if posts_hot %}
+                            {% for post in posts_hot %}
+                            <a class="list-group-item" title="{{post.title}}"
+                               href="{% url 'detail' post.id %}">
+                                <span class="badge">{{post.view_count}}</span>
+                                {{post.title}}
+                                <span class="clearfix"></span>
+                            </a>
+                            {% endfor %}
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="widget widget-default">
+                        <div class="widget-header"><h6><i class="fa fa-folder fa-fw"></i>分类</h6></div>
+                        <ul class="widget-body list-group">
+                            {% if categorys_list %}
+                            {% for category in categorys_list %}
+                            <a href="/blog/category/{{ category.slug }}/" class="list-group-item">
+                                {{ category.name }}<span class="badge">{{ category.posts_count }}</span>
+                            </a>
+                            {% endfor %}
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <!--
+                    <div class="widget widget-default">
+                        <div class="widget-header"><h6><i class="fa fa-tags fa-fw"></i>标签</h6></div>
+                        <ul class="widget-body">
+                            <div class="tag-list">
+                                <a href="https://lufficc.com/tag/Jcenter" class="tag">
+                                    Jcenter
+                                    <span class="badge">1</span>
+                                </a>
+                                <a href="https://lufficc.com/tag/%E8%B5%84%E6%BA%90" class="tag">
+                                    资源
+                                    <span class="badge">2</span>
+                                </a>
+                                <a href="https://lufficc.com/tag/Laravel" class="tag">
+                                    Laravel
+                                    <span class="badge">4</span>
+                                </a>
+                                <a href="https://lufficc.com/tag/LEMP" class="tag">
+                                    LEMP
+                                    <span class="badge">1</span>
+                                </a>
+                                <a href="https://lufficc.com/tag/Git" class="tag">
+                                    Git
+                                    <span class="badge">1</span>
+                                </a>
+                                <a href="https://lufficc.com/tag/%E6%A6%82%E5%BF%B5" class="tag">
+                                    概念
+                                    <span class="badge">2</span>
+                                </a>
+                            </div>
+                        </ul>
+                    </div>
+                    -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
